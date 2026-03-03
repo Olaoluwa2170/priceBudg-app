@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "PriceIt",
+    "slug": "priceit",
+    "version": "1.0.4",
+    "scheme": "priceit",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#000000",
+          "image": "./assets/splash.png",
+          "imageWidth": 150
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow PriceIt to access your camera to scan items."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow PriceIt to access your photos to select images."
+        }
+      ]
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.priceit.priceitapp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.priceit.priceitapp",
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"]
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "367d4b7c-42a6-4815-ba8f-bf64c9382946"
+      }
+    },
+    "owner": "priceit"
+  }
+}
