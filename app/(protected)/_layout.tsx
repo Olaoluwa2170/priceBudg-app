@@ -65,7 +65,7 @@ function CustomDrawerContent(props: any) {
           <Text style={styles.requestCountValue}>{formatRequestCount()}</Text>
         </View>
 
-        {!isPremium && (
+        {/* {!isPremium && (
           <TouchableOpacity style={styles.upgradeCard} onPress={handleUpgrade}>
             <View style={styles.upgradeCardContent}>
               <Crown size={20} color={colors.success} />
@@ -75,7 +75,7 @@ function CustomDrawerContent(props: any) {
               </View>
             </View>
           </TouchableOpacity>
-        )}
+        )} */}
 
         <View style={styles.drawerFooter}>
           <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
@@ -132,14 +132,14 @@ export default function DrawerLayout() {
             drawerIcon: ({ color, size }) => <CircleDollarSign size={size} color={color} />,
           }}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="subscription"
           options={{
             title: 'Subscription',
             drawerLabel: 'Subscription',
             drawerIcon: ({ color, size }) => <Crown size={size} color={color} />,
           }}
-        />
+        /> */}
         <Drawer.Screen
           name="settings"
           options={{
@@ -148,12 +148,12 @@ export default function DrawerLayout() {
             drawerIcon: ({ color, size }) => <Settings size={size} color={color} />,
           }}
         />
-        <Drawer.Screen
+        {/* <Drawer.Screen
           name="budget"
           options={{
             drawerItemStyle: { display: 'none' },
           }}
-        />
+        /> */}
       </Drawer>
     </SafeAreaLayout>
   );

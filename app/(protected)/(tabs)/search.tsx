@@ -205,7 +205,7 @@ export default function SearchItemScreen() {
       <View style={styles.searchRow}>
         <TextInput
           style={styles.input}
-          placeholder="e.g. wireless earbuds under $100"
+          placeholder="e.g. wireless earbuds under 100 naira"
           placeholderTextColor={colors.placeholderGray}
           value={query}
           onChangeText={setQuery}

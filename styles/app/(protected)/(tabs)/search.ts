@@ -32,8 +32,9 @@ export const styles = StyleSheet.create({
     gap: 12,
     paddingHorizontal: 20,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
+    // borderBottomWidth: 1,
+    // borderBottomColor: colors.gray200,
+    // marginHorizontal: 10,
   },
   input: {
     flex: 1,

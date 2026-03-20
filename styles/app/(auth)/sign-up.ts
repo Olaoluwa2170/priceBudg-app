@@ -18,8 +18,8 @@ export const styles = StyleSheet.create({
   logo: {
     position: 'relative',
     marginBottom: 60,
-    width: 300,
-    height: 60,
+    width: 350,
+    height: 150,
     resizeMode: 'contain',
   },
   content: {

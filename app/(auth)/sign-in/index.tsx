@@ -199,12 +199,15 @@ export default function SignInScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
-          <Image source={require('../../../assets/images/priceit-logo.png')} style={styles.logo} />
+          <Image
+            source={require('../../../assets/images/priceitbudgetit-logo.png')}
+            style={styles.logo}
+          />
           <View style={styles.content}>
             <View style={styles.topContentView}>
               <Text style={styles.title}>Welcome 👋</Text>
               <Text style={styles.subtitle}>
-                Sign in to start scanning products and comparing prices
+                Sign in to start scanning products and budgeting prices
               </Text>
             </View>
 

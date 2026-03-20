@@ -7,7 +7,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -48,14 +50,16 @@
         "backgroundColor": "#000000"
       },
       "package": "com.elitebabson.priceitbudgetit",
-      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"]
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "367d4b7c-42a6-4815-ba8f-bf64c9382946"
+        "projectId": "2d3ac000-5fe1-487b-9d94-dbcb320e1418"
       }
-    },
-    "owner": "priceit"
+    }
   }
 }
