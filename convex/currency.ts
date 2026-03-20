@@ -9,9 +9,11 @@ export const setUserPrimaryCurrency = mutation({
     currency: v.string(),
   },
   handler: async (ctx, { userId, currency }) => {
-    const user = await ctx.runQuery(api.users.getActiveUser);
+    const authIdentity = await ctx.auth.getUserIdentity();
+    if (!authIdentity) throw new Error('Authenticated User is required');
 
-    if (!user) throw new Error('Authenticated User is required');
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error('User not found');
 
     const userPrimaryCurrencyRecord = await ctx.db
       .query('primaryCurrency')
@@ -19,7 +21,7 @@ export const setUserPrimaryCurrency = mutation({
       .first();
 
     if (userPrimaryCurrencyRecord) {
-      await ctx.db.patch('primaryCurrency', userPrimaryCurrencyRecord._id, {
+      await ctx.db.patch(userPrimaryCurrencyRecord._id, {
         primaryCurrency: currency,
       });
       return;

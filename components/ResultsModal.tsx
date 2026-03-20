@@ -47,7 +47,7 @@ export function ResultsModal({
   const [rates, setRates] = useState<ExchangeRateResponse | null>(null);
   const [ratesLoading, setRatesLoading] = useState(false);
   const [ratesError, setRatesError] = useState<string | null>(null);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('NGN');
   const [showSelectBudgetModal, setShowSelectBudgetModal] = useState(false);
 
   const { isAuthenticated } = useConvexAuth();
@@ -118,10 +118,10 @@ export function ResultsModal({
 
   const defaultFormattedPrice = () => {
     if (!rates || !basePrice) return null;
-    const USDRate = rates.conversion_rates['USD'];
+    const USDRate = rates.conversion_rates['NGN'];
     if (!USDRate) return null;
     const converted = basePrice * USDRate;
-    return `${Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(converted)}`;
+    return `${Intl.NumberFormat('en-US', { style: 'currency', currency: 'NGN' }).format(converted)}`;
   };
 
   const formattedConvertedPrice = () => {
@@ -213,7 +213,7 @@ export function ResultsModal({
         <BottomSheetView style={styles.content}>
           {renderSharedItemContent()}
 
-          {basePrice !== null && (
+          {/* {basePrice !== null && (
             <View style={styles.currencySection}>
               <Text style={styles.currencySectionTitle}>Compare price in other currencies</Text>
               {ratesLoading && (
@@ -270,7 +270,7 @@ export function ResultsModal({
                 </>
               )}
             </View>
-          )}
+          )} */}
 
           {onDelete && (
             <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(item.id)}>

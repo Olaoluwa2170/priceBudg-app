@@ -12,7 +12,8 @@ import { useFocusEffect } from 'expo-router';
 import { Trash2 } from 'lucide-react-native';
 import { getScans, deleteScan, clearAllScans } from '../../../utils/storage/scans';
 import { formatDate } from '../../../utils/date';
-import { ScanItem, ScanSection } from '../../../types';
+import { ExchangeRateResponse, ScanItem, ScanSection } from '../../../types';
+import { getExchangeRateRecord, saveExchangeRateRecord } from '../../../utils/storage/currency-rates';
 import { ResultsModal } from '../../../components/ResultsModal';
 import { colors } from '../../../styles/colors';
 import { styles } from 'styles/app/(protected)/(tabs)/history';
@@ -24,7 +25,8 @@ export default function HistoryScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ScanItem | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState('NGN');
+  const [rates, setRates] = useState<ExchangeRateResponse | null>(null);
 
   const { isAuthenticated } = useConvexAuth();
   const userPrimaryCurrency = useQuery(
@@ -37,6 +39,33 @@ export default function HistoryScreen() {
       setSelectedCurrency(userPrimaryCurrency);
     }
   }, [userPrimaryCurrency]);
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        const rates_from_local = await getExchangeRateRecord();
+        if (rates_from_local) {
+          setRates(rates_from_local);
+          return;
+        }
+
+        const res = await fetch(
+          'https://v6.exchangerate-api.com/v6/bc74645c6d3b4aac8f84b0c1/latest/USD'
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (data.result === 'success' && data.conversion_rates) {
+            await saveExchangeRateRecord(data);
+            setRates(data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rates:', error);
+      }
+    };
+
+    fetchRates();
+  }, []);
 
   const loadScans = async () => {
     try {
@@ -129,6 +158,11 @@ export default function HistoryScreen() {
   };
 
   const formattedConvertedPrice = (price: number, currency: string) => {
+    if (rates && rates.conversion_rates && rates.conversion_rates[currency]) {
+      const rate = rates.conversion_rates[currency];
+      const converted = price * rate;
+      return Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(converted);
+    }
     return Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(price);
   };
 

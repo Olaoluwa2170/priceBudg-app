@@ -17,26 +17,14 @@ function CustomDrawerContent(props: any) {
   const { signOut } = useAuth();
 
   const requestCount = useQuery(api.requestCount.getUserRequestCount);
-  const activeSubscription = useQuery(api.subscriptions.getActiveSubscription);
-  const plans = useQuery(api.subscriptions.getPlans);
 
-  const currentPlan = activeSubscription?.plan
-    ? plans?.find((plan) => plan.slug === activeSubscription.plan?.slug)
-    : FREE_PLAN;
 
-  const isPremium = currentPlan?.slug === 'premium';
-  const requestAllocations = currentPlan?.requestAllocations || FREE_PLAN.requestAllocations;
+
+  const requestAllocations = FREE_PLAN.requestAllocations;
 
   const formatRequestCount = () => {
-    if (isPremium || requestAllocations >= 10_000) {
-      return 'Unlimited';
-    }
     const count = requestCount ?? 0;
     return `${count} / ${requestAllocations}`;
-  };
-
-  const handleUpgrade = () => {
-    router.push('/(protected)/subscription');
   };
 
   const handleSignOut = async () => {
@@ -48,7 +36,7 @@ function CustomDrawerContent(props: any) {
     <View style={styles.drawerContainer}>
       <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerScrollContent}>
         <View style={styles.drawerHeader}>
-          <Text style={styles.drawerTitle}>PriceIt</Text>
+          <Text style={styles.drawerTitle}>PriceItBudgetit</Text>
           {user && (
             <Text style={styles.drawerSubtitle}>
               {user.firstName || user.emailAddresses[0]?.emailAddress}
@@ -65,17 +53,6 @@ function CustomDrawerContent(props: any) {
           <Text style={styles.requestCountValue}>{formatRequestCount()}</Text>
         </View>
 
-        {/* {!isPremium && (
-          <TouchableOpacity style={styles.upgradeCard} onPress={handleUpgrade}>
-            <View style={styles.upgradeCardContent}>
-              <Crown size={20} color={colors.success} />
-              <View style={styles.upgradeCardText}>
-                <Text style={styles.upgradeCardTitle}>Upgrade to Premium</Text>
-                <Text style={styles.upgradeCardSubtitle}>Get unlimited requests</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        )} */}
 
         <View style={styles.drawerFooter}>
           <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
@@ -132,14 +109,7 @@ export default function DrawerLayout() {
             drawerIcon: ({ color, size }) => <CircleDollarSign size={size} color={color} />,
           }}
         />
-        {/* <Drawer.Screen
-          name="subscription"
-          options={{
-            title: 'Subscription',
-            drawerLabel: 'Subscription',
-            drawerIcon: ({ color, size }) => <Crown size={size} color={color} />,
-          }}
-        /> */}
+     
         <Drawer.Screen
           name="settings"
           options={{
@@ -148,12 +118,12 @@ export default function DrawerLayout() {
             drawerIcon: ({ color, size }) => <Settings size={size} color={color} />,
           }}
         />
-        {/* <Drawer.Screen
-          name="budget"
+        <Drawer.Screen
+          name="budget/[id]"
           options={{
             drawerItemStyle: { display: 'none' },
           }}
-        /> */}
+        />
       </Drawer>
     </SafeAreaLayout>
   );

@@ -12,8 +12,10 @@ import BottomSheet, {
   BottomSheetTextInput,
   TouchableOpacity as BottomSheetTouchableOpacity,
 } from '@gorhom/bottom-sheet';
-import { useRef, useMemo, useCallback } from 'react';
+import { useRef, useMemo, useCallback, useEffect } from 'react';
 import { Id } from 'convex/_generated/dataModel';
+import { ExchangeRateResponse } from '../../../types';
+import { getExchangeRateRecord } from '../../../utils/storage/currency-rates';
 
 export default function BudgetsScreen() {
   const router = useRouter();
@@ -31,6 +33,55 @@ export default function BudgetsScreen() {
   const snapPoints = useMemo(() => ['50%'], []);
   const [newBudgetName, setNewBudgetName] = useState('');
   const [newBudgetAmount, setNewBudgetAmount] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('NGN');
+  const [rates, setRates] = useState<ExchangeRateResponse | null>(null);
+
+  const { isAuthenticated } = useConvexAuth();
+  const userPrimaryCurrency = useQuery(
+    api.currency.getUserPrimaryCurrency,
+    isAuthenticated ? undefined : 'skip'
+  );
+
+  useEffect(() => {
+    if (userPrimaryCurrency) {
+      setSelectedCurrency(userPrimaryCurrency);
+    }
+  }, [userPrimaryCurrency]);
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        const rates_from_local = await getExchangeRateRecord();
+        if (rates_from_local) {
+          setRates(rates_from_local);
+          return;
+        }
+
+        const res = await fetch(
+          'https://v6.exchangerate-api.com/v6/bc74645c6d3b4aac8f84b0c1/latest/USD'
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (data.result === 'success' && data.conversion_rates) {
+            setRates(data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rates:', error);
+      }
+    };
+
+    fetchRates();
+  }, []);
+
+  const formattedPrice = (price: number) => {
+    if (rates && rates.conversion_rates && rates.conversion_rates[selectedCurrency]) {
+      const rate = rates.conversion_rates[selectedCurrency];
+      const converted = price * rate;
+      return Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(converted);
+    }
+    return Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(price);
+  };
 
   const handleCreateBudget = async () => {
     console.log('handleCreateBudget initiated', { newBudgetName, userId });
@@ -102,10 +153,7 @@ export default function BudgetsScreen() {
         {item.targetAmount && (
           <Text
             style={{ fontFamily: fontFamily.ManropeMedium, fontSize: 14, color: colors.gray500 }}>
-            Target:{' '}
-            {Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-              item.targetAmount
-            )}
+            Target: {Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(item.targetAmount)}
           </Text>
         )}
       </View>
@@ -238,7 +286,7 @@ export default function BudgetsScreen() {
               color: colors.gray700,
               marginBottom: 8,
             }}>
-            Target Amount (Optional, in USD)
+            Target Amount (Optional, in {selectedCurrency})
           </Text>
           <BottomSheetTextInput
             style={{

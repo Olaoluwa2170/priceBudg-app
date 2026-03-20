@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   TextInput,
   Modal,
+  Pressable,
 } from 'react-native';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -19,8 +20,9 @@ import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { api } from 'convex/_generated/api';
 import { colors } from '../styles/colors';
 import { fontFamily } from '../styles/font-family';
-import { Wallet, Plus, Check } from 'lucide-react-native';
-import { ScanItem } from '../types';
+import { Wallet, Plus, Check, X } from 'lucide-react-native';
+import { ExchangeRateResponse, ScanItem } from '../types';
+import { getExchangeRateRecord } from '../utils/storage/currency-rates';
 import { useUser } from '@clerk/clerk-expo';
 interface SelectBudgetModalProps {
   visible: boolean;
@@ -49,6 +51,46 @@ export function SelectBudgetModal({ visible, onClose, item, basePrice }: SelectB
   const [newBudgetName, setNewBudgetName] = useState('');
   const [newBudgetAmount, setNewBudgetAmount] = useState('');
   const [addingToBudget, setAddingToBudget] = useState<string | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState('NGN');
+  const [rates, setRates] = useState<ExchangeRateResponse | null>(null);
+
+  const userPrimaryCurrency = useQuery(
+    api.currency.getUserPrimaryCurrency,
+    isAuthenticated ? undefined : 'skip'
+  );
+
+  React.useEffect(() => {
+    if (userPrimaryCurrency) {
+      setSelectedCurrency(userPrimaryCurrency);
+    }
+  }, [userPrimaryCurrency]);
+
+  React.useEffect(() => {
+    const fetchRates = async () => {
+      if (!visible) return;
+      try {
+        const rates_from_local = await getExchangeRateRecord();
+        if (rates_from_local) {
+          setRates(rates_from_local);
+          return;
+        }
+
+        const res = await fetch(
+          'https://v6.exchangerate-api.com/v6/bc74645c6d3b4aac8f84b0c1/latest/USD'
+        );
+        if (res.ok) {
+          const data = await res.json();
+          if (data.result === 'success' && data.conversion_rates) {
+            setRates(data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching exchange rates:', error);
+      }
+    };
+
+    fetchRates();
+  }, [visible]);
 
   React.useEffect(() => {
     if (visible) {
@@ -114,7 +156,12 @@ export function SelectBudgetModal({ visible, onClose, item, basePrice }: SelectB
   );
 
   const formattedPrice = (price: number) => {
-    return Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+    if (rates && rates.conversion_rates && rates.conversion_rates[selectedCurrency]) {
+      const rate = rates.conversion_rates[selectedCurrency];
+      const converted = price * rate;
+      return Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(converted);
+    }
+    return Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(price);
   };
 
   const isLoading = budgets === undefined && userId !== undefined;
@@ -144,7 +191,13 @@ export function SelectBudgetModal({ visible, onClose, item, basePrice }: SelectB
           />
           <View style={styles.contentContainer}>
             <View style={styles.header}>
-              <Text style={styles.title}>Add to Budget</Text>
+              <View className="flex-row justify-between items-center" style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={styles.title}>Add to Budget</Text>
+
+                <Pressable onPress={onClose}>
+                  <X size={24} color={colors.gray500} />
+                </Pressable>
+              </View>
               <Text style={styles.subtitle}>
                 {item.name} - {basePrice ? formattedPrice(basePrice) : 'Unknown Price'}
               </Text>
@@ -221,7 +274,7 @@ export function SelectBudgetModal({ visible, onClose, item, basePrice }: SelectB
                           <Text style={styles.budgetName}>{budget.name}</Text>
                           {budget.targetAmount && (
                             <Text style={styles.budgetTarget}>
-                              Target: {formattedPrice(budget.targetAmount)}
+                              Target: {Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(budget.targetAmount)}
                             </Text>
                           )}
                         </View>

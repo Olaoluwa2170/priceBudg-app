@@ -12,7 +12,7 @@ import { styles } from 'styles/app/(protected)/currency';
 
 export default function CurrencyScreen() {
   const navigation = useNavigation();
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('NGN');
   const [exchangeRates, setExchangeRates] = useState<ExchangeRateResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -70,7 +70,7 @@ export default function CurrencyScreen() {
     loadExchangeRates();
   }, []);
 
-  // Set initial selected currency to user's primary currency if available
+
   useEffect(() => {
     if (userPrimaryCurrency && currencyList.includes(userPrimaryCurrency)) {
       setSelectedCurrency(userPrimaryCurrency);

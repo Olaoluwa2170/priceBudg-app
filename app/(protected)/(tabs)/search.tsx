@@ -117,7 +117,7 @@ export default function SearchItemScreen() {
   }, [query, isSearching]);
 
   const formatPrice = (priceUsd: number) => {
-    const currency = userPrimaryCurrency ?? 'USD';
+    const currency = userPrimaryCurrency ?? 'NGN';
 
     if (currency === 'USD') {
       return Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(priceUsd);
@@ -129,42 +129,10 @@ export default function SearchItemScreen() {
       return Intl.NumberFormat('en-US', { style: 'currency', currency }).format(converted);
     }
 
-    return Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(priceUsd);
+    return Intl.NumberFormat('en-US', { style: 'currency', currency: 'NGN' }).format(priceUsd * (rates?.conversion_rates['NGN'] || 1));
   };
 
-  // const handleUpgrade = () => {
-  //   router.push('/(protected)/subscription');
-  // };
 
-  // Premium gate: show upgrade CTA for non-premium users
-  // if (!isPremium) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <View style={styles.header}>
-  //         <Text style={styles.headerTitle}>Search</Text>
-  //         <Text style={styles.headerSubtitle}>
-  //           Find items by description and get price estimates
-  //         </Text>
-  //       </View>
-  //       <View style={styles.premiumGateContainer}>
-  //         <View style={styles.premiumIconWrap}>
-  //           <Crown size={40} color={colors.success} fill={colors.success} />
-  //         </View>
-  //         <Text style={styles.premiumTitle}>Premium feature</Text>
-  //         <Text style={styles.premiumSubtitle}>
-  //           Search is available for Premium subscribers. Describe what you’re looking for and get a
-  //           list of matching items with estimated prices.
-  //         </Text>
-  //         <TouchableOpacity
-  //           style={styles.upgradeButton}
-  //           onPress={handleUpgrade}
-  //           activeOpacity={0.8}>
-  //           <Text style={styles.upgradeButtonText}>Upgrade to Premium</Text>
-  //         </TouchableOpacity>
-  //       </View>
-  //     </View>
-  //   );
-  // }
 
   const renderResultItem = ({ item }: { item: SearchResultItem }) => (
     <View style={styles.resultItem}>

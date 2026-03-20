@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import { AnalysisOverlay } from '../../../components/AnalysisOverlay';
 import { LocationOverlay } from '../../../components/LocationOverlay';
 import { ResultsModal } from '../../../components/ResultsModal';
-import { UpgradeOverlay } from '../../../components/UpgradeOverlay';
 import { saveLocationData, getLocationData } from '../../../utils/storage/location';
 import { ReverseGeocodeResult, ScanItem } from '../../../types';
 import { processScanWithCreditCheck } from '../../../utils/scan';
@@ -30,7 +29,7 @@ export default function ScanScreen() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<ScanItem | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
+  // const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   const cameraRef = useRef<CameraView>(null);
   const [gettingLocation, setGettingLocation] = useState(false);
   const [userLocation, setUserLocation] = useState<{ country?: string; city?: string } | null>(
@@ -159,7 +158,7 @@ export default function ScanScreen() {
 
         if (result === 'no-credit') {
           // Credits used up - show upgrade overlay
-          setShowUpgradeOverlay(true);
+          Alert.alert('No Credit', 'You have used up all your credits');
           return;
         }
 
@@ -212,7 +211,7 @@ export default function ScanScreen() {
 
         if (scanResult === 'no-credit') {
           // Credits used up - show upgrade overlay
-          setShowUpgradeOverlay(true);
+          Alert.alert('No Credit', 'You have used up all your credits');
           return;
         }
 
@@ -239,7 +238,6 @@ export default function ScanScreen() {
 
   const handleScanAnother = () => {
     setShowResult(false);
-    setShowUpgradeOverlay(false);
     setResult(null);
     setCapturedImage(null);
   };
@@ -249,16 +247,10 @@ export default function ScanScreen() {
     setIsAnalyzing(false);
     setResult(null);
     setShowResult(false);
-    setShowUpgradeOverlay(false);
   };
 
-  const handleUpgrade = () => {
-    setShowUpgradeOverlay(false);
-    router.push('/(protected)/subscription');
-  };
 
   const handleCloseUpgrade = () => {
-    setShowUpgradeOverlay(false);
     setResult(null);
     setCapturedImage(null);
   };
@@ -353,7 +345,7 @@ export default function ScanScreen() {
         </View>
       )}
 
-      {showResult && result && !showUpgradeOverlay && (
+      {showResult && result && (
         <ResultsModal
           item={result}
           visible={showResult}
@@ -363,13 +355,7 @@ export default function ScanScreen() {
         />
       )}
 
-      {showUpgradeOverlay && capturedImage && (
-        <UpgradeOverlay
-          imageUri={capturedImage}
-          onUpgrade={handleUpgrade}
-          onClose={handleCloseUpgrade}
-        />
-      )}
+
     </View>
   );
 }
