@@ -23,7 +23,7 @@
       "distribution": "internal",
       "android": {
         "autoIncrement": true,
-        "buildType": "app-bundle"
+        "buildType": "apk"
       }
     },
     "development-simulator": {
@@ -34,7 +34,7 @@
       "distribution": "store",
       "android": {
         "autoIncrement": true,
-        "buildType": "app-bundle"
+        "buildType": "apk"
       }
     }
   },

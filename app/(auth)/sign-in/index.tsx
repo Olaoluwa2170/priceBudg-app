@@ -205,7 +205,7 @@ export default function SignInScreen() {
           />
           <View style={styles.content}>
             <View style={styles.topContentView}>
-              <Text style={styles.title}>Welcome 👋</Text>
+              <Text style={styles.title}>Welcome </Text>
               <Text style={styles.subtitle}>
                 Sign in to start scanning products and budgeting prices
               </Text>

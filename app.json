@@ -30,13 +30,24 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow PriceIt to access your camera to scan items."
+          "cameraPermission": "Allow PriceitBudgetit to access your camera to scan items."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow PriceIt to access your photos to select images."
+          "photosPermission": "Allow PriceitBudgetit to access your photos to select images."
+        }
+      ],
+      "expo-build-properties",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "36.0.0"
+          }
         }
       ]
     ],
